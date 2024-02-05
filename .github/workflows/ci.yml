@@ -34,10 +34,10 @@ jobs:
           - 3.9
     steps:
       # Prepare environment
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Set up and run tests
       - name: Install python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Generate cache key CACHE
@@ -78,10 +78,10 @@ jobs:
             /tmp/.buildx-cache
           key: buildx|${{ secrets.CACHE_DATE }}|${{ runner.os }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
         with:
           driver-opts: network=host
           install: true
@@ -97,7 +97,7 @@ jobs:
             {{major}}
             {{major}}.{{minor}}
       - name: Build and push to local (test) registry
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
@@ -114,13 +114,13 @@ jobs:
       # Next jobs only happen outside of pull requests and on main branches
       - name: Login to DockerHub
         if: ${{ fromJSON(env.PUSH) }}
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_LOGIN }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to GitHub Container Registry
         if: ${{ fromJSON(env.PUSH) }}
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ secrets.BOT_LOGIN }}
@@ -140,7 +140,7 @@ jobs:
             {{major}}.{{minor}}
       - name: Build and push to public registry(s)
         if: ${{ fromJSON(env.PUSH) }}
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
